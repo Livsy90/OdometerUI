@@ -4,6 +4,9 @@
 
 Instead of jumping directly from one number to another, it renders intermediate values step by step (for example, `1 -> 2 -> 3 -> 4`).
 
+[Demo](https://www.youtube.com/watch?v=19YJQK6JzXY)
+
+
 ## Features
 
 - Odometer-style incremental/decremental animation
