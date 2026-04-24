@@ -5,9 +5,7 @@ public struct OdometerNumberView: View {
     private let stepDuration: Double
     private let maxAnimationDuration: Double
 
-    // Internal value that animates through all intermediate numbers.
     @State private var displayedValue: Int
-    // Active animation task so we can cancel it when a new value arrives.
     @State private var animationTask: Task<Void, Never>?
 
     public init(
@@ -33,34 +31,32 @@ public struct OdometerNumberView: View {
             }
     }
 
+    @MainActor
     private func animateToValue(_ newValue: Int) {
-        // Cancel previous run to avoid overlapping animations.
         animationTask?.cancel()
 
         let startValue = displayedValue
         guard startValue != newValue else { return }
 
         let distance = abs(newValue - startValue)
-        let effectiveStepDuration = min(stepDuration, maxAnimationDuration / Double(distance))
+        let effectiveStepDuration = min(
+            stepDuration,
+            maxAnimationDuration / Double(distance)
+        )
 
         animationTask = Task {
             let step = newValue > startValue ? 1 : -1
             var current = startValue
 
-            // Move one number per tick until we reach the target.
             while current != newValue {
                 do {
                     try await Task.sleep(for: .seconds(effectiveStepDuration))
-                    try Task.checkCancellation()
                 } catch {
                     break
                 }
-                current += step
 
-                // UI state updates must happen on the main actor.
-                await MainActor.run {
-                    displayedValue = current
-                }
+                current += step
+                displayedValue = current
             }
         }
     }
