@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct OdometerNumberView: View {
     private let value: Int
+    private let stepValue: Int
     private let stepDuration: Double
     private let maxAnimationDuration: Double
 
@@ -10,10 +11,12 @@ public struct OdometerNumberView: View {
 
     public init(
         value: Int,
+        stepValue: Int = 1,
         stepDuration: Double = 0.1,
         maxAnimationDuration: Double = 0.9
     ) {
         self.value = value
+        self.stepValue = stepValue
         self.stepDuration = stepDuration
         self.maxAnimationDuration = maxAnimationDuration
         displayedValue = value
@@ -45,7 +48,7 @@ public struct OdometerNumberView: View {
         )
 
         animationTask = Task {
-            let step = newValue > startValue ? 1 : -1
+            let step = newValue > startValue ? stepValue : -stepValue
             var current = startValue
 
             while current != newValue {
